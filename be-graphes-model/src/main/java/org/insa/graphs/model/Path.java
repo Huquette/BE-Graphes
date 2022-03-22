@@ -30,12 +30,28 @@ public class Path {
      * @throws IllegalArgumentException If the list of nodes is not valid, i.e. two
      *         consecutive nodes in the list are not connected in the graph.
      * 
-     * @deprecated Need to be implemented.
      */
     public static Path createFastestPathFromNodes(Graph graph, List<Node> nodes)
             throws IllegalArgumentException {
         List<Arc> arcs = new ArrayList<Arc>();
+        List<Arc> liste_arcs = new ArrayList<Arc>();
         // TODO:
+        System.out.println(nodes);
+        for (int i = 0; i<nodes.size()-1; i++) {
+        	liste_arcs = nodes.get(i).getSuccessors();
+        	liste_arcs = filter_arc(liste_arcs, nodes.get(i+1));
+        	if (liste_arcs.isEmpty()) {
+        		System.out.println("except\n");
+        		throw new IllegalArgumentException();
+        	}
+        	Arc best_arc = liste_arcs.get(0);
+        	for (int j=1; j<liste_arcs.size();j++) {
+        		if (best_arc.getMinimumTravelTime()>liste_arcs.get(j).getMinimumTravelTime()) {
+        			best_arc = liste_arcs.get(j);
+        		}
+        	}
+        	arcs.add(best_arc);
+        }
         return new Path(graph, arcs);
     }
 
@@ -51,15 +67,45 @@ public class Path {
      * @throws IllegalArgumentException If the list of nodes is not valid, i.e. two
      *         consecutive nodes in the list are not connected in the graph.
      * 
-     * @deprecated Need to be implemented.
      */
     public static Path createShortestPathFromNodes(Graph graph, List<Node> nodes)
             throws IllegalArgumentException {
-        List<Arc> arcs = new ArrayList<Arc>();
+    	if (nodes.size() == 0) {
+    		return new Path(graph);
+    	}
+    	if (nodes.size() == 1) {
+    		return new Path(graph, nodes.get(0));
+    	}
+        List<Arc> liste_arcs = new ArrayList<Arc>();
         // TODO:
-        return new Path(graph, arcs);
+        System.out.println(nodes);
+        for (int i = 0; i<nodes.size()-1; i++) {
+        	liste_arcs = nodes.get(i).getSuccessors();
+        	liste_arcs = filter_arc(liste_arcs, nodes.get(i+1));
+        	if (liste_arcs.isEmpty()) {
+        		System.out.println("except\n");
+        		throw new IllegalArgumentException();
+        	}
+        	Arc best_arc = liste_arcs.get(0);
+        	for (int j=1; j<liste_arcs.size();j++) {
+        		if (best_arc.getLength()>liste_arcs.get(j).getLength()) {
+        			best_arc = liste_arcs.get(j);
+        		}
+        	}
+        	liste_arcs.add(best_arc);
+        }
+        return new Path(graph, liste_arcs);
     }
-
+    
+    public static List<Arc> filter_arc(List<Arc> l_arc, Node node_dest){
+    	List<Arc> liste_arcs = new ArrayList<Arc>();
+    	for (int i = 0; i<l_arc.size(); i++) {
+    		if (l_arc.get(i).getDestination() == node_dest) {
+    			liste_arcs.add(l_arc.get(i));
+    		}
+    	}
+    	return liste_arcs;
+    }
     /**
      * Concatenate the given paths.
      * 
@@ -198,11 +244,24 @@ public class Path {
      * 
      * @return true if the path is valid, false otherwise.
      * 
-     * @deprecated Need to be implemented.
      */
     public boolean isValid() {
         // TODO:
-        return false;
+    	List<Arc> arc = this.arcs;
+    	boolean bool = true;
+    	System.out.println(this);
+    	if (arc.isEmpty()) {
+    		return bool;
+    	}
+    	else {
+    		bool = (this.getOrigin() == arc.get(0).getOrigin());
+    		for (int i=0; i<arc.size()-1 ;i++) {
+    			bool = bool && (arc.get(i).getDestination()== arc.get(i+1).getOrigin());
+    		}
+    		bool = bool && (arc.get(arc.size()-1).getDestination()== this.getDestination());
+    		
+    		return bool;
+    	}
     }
 
     /**

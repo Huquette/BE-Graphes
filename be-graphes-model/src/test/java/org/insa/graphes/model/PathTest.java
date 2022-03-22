@@ -205,6 +205,8 @@ public class PathTest {
                 Arrays.asList(new Node[] { nodes[0], nodes[1], nodes[2] }));
         expected = new Arc[] { a2b, b2c };
         assertEquals(expected.length, path.getArcs().size());
+        System.out.println(expected);
+        System.out.println(path.getArcs());
         for (int i = 0; i < expected.length; ++i) {
             assertEquals(expected[i], path.getArcs().get(i));
         }
