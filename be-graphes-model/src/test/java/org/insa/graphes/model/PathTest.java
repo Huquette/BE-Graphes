@@ -205,8 +205,6 @@ public class PathTest {
                 Arrays.asList(new Node[] { nodes[0], nodes[1], nodes[2] }));
         expected = new Arc[] { a2b, b2c };
         assertEquals(expected.length, path.getArcs().size());
-        System.out.println(expected);
-        System.out.println(path.getArcs());
         for (int i = 0; i < expected.length; ++i) {
             assertEquals(expected[i], path.getArcs().get(i));
         }
@@ -215,8 +213,14 @@ public class PathTest {
         path = Path.createShortestPathFromNodes(graph,
                 Arrays.asList(new Node[] { nodes[0], nodes[1], nodes[2], nodes[3] }));
         expected = new Arc[] { a2b, b2c, c2d_2 };
+        /*
+        System.out.println("ours\n");
+        System.out.println(path.getArcs());
+        System.out.println("expected\n");
+        */
         assertEquals(expected.length, path.getArcs().size());
         for (int i = 0; i < expected.length; ++i) {
+            /*System.out.println(expected[i]);*/
             assertEquals(expected[i], path.getArcs().get(i));
         }
 

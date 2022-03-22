@@ -33,26 +33,36 @@ public class Path {
      */
     public static Path createFastestPathFromNodes(Graph graph, List<Node> nodes)
             throws IllegalArgumentException {
-        List<Arc> arcs = new ArrayList<Arc>();
+    	System.out.println("Nouveau algo\n");
+    	if (nodes.size() == 0) {
+    		return new Path(graph);
+    	}
+    	if (nodes.size() == 1) {
+    		return new Path(graph, nodes.get(0));
+    	}
+    	List <Arc> liste_finale = new ArrayList<Arc>();
         List<Arc> liste_arcs = new ArrayList<Arc>();
         // TODO:
-        System.out.println(nodes);
         for (int i = 0; i<nodes.size()-1; i++) {
         	liste_arcs = nodes.get(i).getSuccessors();
+        	System.out.println("avant filtrage\n");
+        	System.out.println(liste_arcs);
         	liste_arcs = filter_arc(liste_arcs, nodes.get(i+1));
         	if (liste_arcs.isEmpty()) {
         		System.out.println("except\n");
         		throw new IllegalArgumentException();
         	}
+        	System.out.println("apres filtrage\n");
+        	System.out.println(liste_arcs);
         	Arc best_arc = liste_arcs.get(0);
         	for (int j=1; j<liste_arcs.size();j++) {
         		if (best_arc.getMinimumTravelTime()>liste_arcs.get(j).getMinimumTravelTime()) {
         			best_arc = liste_arcs.get(j);
         		}
         	}
-        	arcs.add(best_arc);
+        	liste_finale.add(best_arc);
         }
-        return new Path(graph, arcs);
+        return new Path(graph, liste_finale);
     }
 
     /**
@@ -70,31 +80,36 @@ public class Path {
      */
     public static Path createShortestPathFromNodes(Graph graph, List<Node> nodes)
             throws IllegalArgumentException {
+    	System.out.println("Nouveau algo\n");
     	if (nodes.size() == 0) {
     		return new Path(graph);
     	}
     	if (nodes.size() == 1) {
     		return new Path(graph, nodes.get(0));
     	}
+    	List <Arc> liste_finale = new ArrayList<Arc>();
         List<Arc> liste_arcs = new ArrayList<Arc>();
         // TODO:
-        System.out.println(nodes);
         for (int i = 0; i<nodes.size()-1; i++) {
         	liste_arcs = nodes.get(i).getSuccessors();
+        	System.out.println("avant filtrage\n");
+        	System.out.println(liste_arcs);
         	liste_arcs = filter_arc(liste_arcs, nodes.get(i+1));
         	if (liste_arcs.isEmpty()) {
         		System.out.println("except\n");
         		throw new IllegalArgumentException();
         	}
+        	System.out.println("apres filtrage\n");
+        	System.out.println(liste_arcs);
         	Arc best_arc = liste_arcs.get(0);
         	for (int j=1; j<liste_arcs.size();j++) {
         		if (best_arc.getLength()>liste_arcs.get(j).getLength()) {
         			best_arc = liste_arcs.get(j);
         		}
         	}
-        	liste_arcs.add(best_arc);
+        	liste_finale.add(best_arc);
         }
-        return new Path(graph, liste_arcs);
+        return new Path(graph, liste_finale);
     }
     
     public static List<Arc> filter_arc(List<Arc> l_arc, Node node_dest){
