@@ -7,27 +7,42 @@ import org.insa.graphs.model.Node;
 public class Label implements Comparable<Label>  {
 	private int numNoeud;
 	private Node sommet_courant;
-	private Boolean trouve;
-	private int cost;
+	private Boolean marque;
+	private float cost;
 	private Node pere;
-	public int getCost() {
+	public float getCost() {
 		return this.cost;
 	}
 	public int getNumNoeud(){
 		return this.numNoeud;
 	}
-	public Label(int numNoeud) {
+	public Label(int numNoeud, Node sommet_courant) {
 		this.numNoeud = numNoeud;
 		this.sommet_courant = sommet_courant;
-		this.trouve = false;
+		this.marque = false;
 		this.cost = 999999999;
 		this.pere = null;
 	}
-	public void setCost(int cost){
+	public void setCost(float cost){
 		this.cost = cost;
 	}
+	public float getTotalCost() {
+		return this.cost;
+	}
+	public void setMarque() {
+		this.marque = true;
+	}
 	public boolean marque() {
-		return this.trouve;
+		return this.marque;
+	}
+	public void setPere(Node pere) {
+		this.pere = pere;
+	}
+	public Node getSommetCourant() {
+		return this.sommet_courant;
+	}
+	public Node getPere() {
+		return this.pere;
 	}
 	  /**
      * Compare the ID of this node with the ID of the given node.
@@ -38,6 +53,13 @@ public class Label implements Comparable<Label>  {
      */
     @Override
     public int compareTo(Label other) {
-        return Integer.compare(getCost(), other.getCost());
+        return Float.compare(getTotalCost(), other.getTotalCost());
     }
+	/**
+	 * Compare the ID of this node with the ID of the given node.
+	 * 
+	 * @param other Node to compare this node with.
+	 * 
+	 * @see java.lang.Comparable#compareTo(java.lang.Object)
+	 */
 }
