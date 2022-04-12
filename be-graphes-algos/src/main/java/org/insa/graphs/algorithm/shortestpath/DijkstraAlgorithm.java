@@ -20,7 +20,9 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
     public DijkstraAlgorithm(ShortestPathData data) {
         super(data);
     }
-
+	public Label newLabel(int numNoeud, Node sommet_courant, Node noeudDestination) {
+		return new Label(numNoeud, sommet_courant);
+	}
     @Override
     protected ShortestPathSolution doRun() {
     	//debut init
@@ -32,7 +34,7 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         int nombreNoeuds = graphe.size();
         System.out.println("avant for 1 plus\n");
         for (int i=0; i<nombreNoeuds; i++) {
-            Label label = new Label(i, listeNoeuds.get(i));
+            Label label = newLabel(i, listeNoeuds.get(i), noeudTerminal);
         	if (i == noeudOrigine.getId()) {
         		label.setCost(0);
         	}

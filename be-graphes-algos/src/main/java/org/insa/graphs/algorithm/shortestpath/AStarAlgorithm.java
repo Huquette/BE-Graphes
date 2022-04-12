@@ -15,6 +15,10 @@ public class AStarAlgorithm extends DijkstraAlgorithm {
     public AStarAlgorithm(ShortestPathData data) {
         super(data); 
     }
+    public Label newLabel(int numNoeud, Node sommet_courant, Node noeudDestination) {
+    	return new LabelStar(numNoeud, sommet_courant, noeudDestination);
+    }
+    /*
     protected ShortestPathSolution doRun() {
     	//debut init
         final ShortestPathData data = getInputData();
@@ -78,5 +82,5 @@ public class AStarAlgorithm extends DijkstraAlgorithm {
         ShortestPathSolution solution = new ShortestPathSolution(data, Status.OPTIMAL, path_final);
         return solution;
     }
-
+	*/
 }
