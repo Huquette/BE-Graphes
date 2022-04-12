@@ -8,9 +8,9 @@ public class Label implements Comparable<Label>  {
 	private int numNoeud;
 	private Node sommet_courant;
 	private Boolean marque;
-	private float cost;
+	private double cost;
 	private Node pere;
-	public float getCost() {
+	public double getCost() {
 		return this.cost;
 	}
 	public int getNumNoeud(){
@@ -23,10 +23,10 @@ public class Label implements Comparable<Label>  {
 		this.cost = 999999999;
 		this.pere = null;
 	}
-	public void setCost(float cost){
+	public void setCost(double cost){
 		this.cost = cost;
 	}
-	public float getTotalCost() {
+	public double getTotalCost() {
 		return this.cost;
 	}
 	public void setMarque() {
@@ -53,7 +53,7 @@ public class Label implements Comparable<Label>  {
      */
     @Override
     public int compareTo(Label other) {
-        return Float.compare(getTotalCost(), other.getTotalCost());
+        return Double.compare(getTotalCost(), other.getTotalCost());
     }
 	/**
 	 * Compare the ID of this node with the ID of the given node.

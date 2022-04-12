@@ -1,5 +1,7 @@
 package org.insa.graphs.algorithm.shortestpath;
 
+import org.insa.graphs.algorithm.AbstractInputData;
+import org.insa.graphs.algorithm.AbstractInputData.Mode;
 import org.insa.graphs.algorithm.AbstractSolution.Status;
 import org.insa.graphs.algorithm.utils.BinaryHeap;
 import org.insa.graphs.model.Arc;
@@ -20,7 +22,7 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
     public DijkstraAlgorithm(ShortestPathData data) {
         super(data);
     }
-	public Label newLabel(int numNoeud, Node sommet_courant, Node noeudDestination) {
+	public Label newLabel(int numNoeud, Node sommet_courant, Node noeudDestination, AbstractInputData Data,Graph graphe) {
 		return new Label(numNoeud, sommet_courant);
 	}
     @Override
@@ -34,7 +36,7 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         int nombreNoeuds = graphe.size();
         System.out.println("avant for 1 plus\n");
         for (int i=0; i<nombreNoeuds; i++) {
-            Label label = newLabel(i, listeNoeuds.get(i), noeudTerminal);
+            Label label = newLabel(i, listeNoeuds.get(i), noeudTerminal, data, graphe);
         	if (i == noeudOrigine.getId()) {
         		label.setCost(0);
         	}
@@ -52,12 +54,13 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         	notifyNodeMarked(labelMin.getSommetCourant());
         	listeLabel.get(labelMin.getNumNoeud()).setMarque();
         	listeSuccesseurs = listeLabel.get(labelMin.getNumNoeud()).getSommetCourant().getSuccessors();
+        	double longueur;
         	for (int i = 0; i < listeSuccesseurs.size(); i++) 
         	{
         	  Node noeudDest = listeSuccesseurs.get(i).getDestination();
-        	  float longueur = listeSuccesseurs.get(i).getLength();
-        	  float nouvelleLongueur = longueur + labelMin.getCost();
-        	  if (nouvelleLongueur < listeLabel.get(noeudDest.getId()).getCost()) {
+        	  longueur = data.getCost(listeSuccesseurs.get(i));
+        	  double nouvelleLongueur = longueur + labelMin.getCost();
+        	  if ((nouvelleLongueur < listeLabel.get(noeudDest.getId()).getCost()) && (data.isAllowed(listeSuccesseurs.get(i)))) {
         		  listeLabel.get(noeudDest.getId()).setCost(nouvelleLongueur);
         		  listeLabel.get(noeudDest.getId()).setPere(labelMin.getSommetCourant());
         		  tasLabel.insert(listeLabel.get(noeudDest.getId()));

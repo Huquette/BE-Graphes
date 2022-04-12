@@ -3,6 +3,7 @@ package org.insa.graphs.algorithm.shortestpath;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.insa.graphs.algorithm.AbstractInputData;
 import org.insa.graphs.algorithm.AbstractSolution.Status;
 import org.insa.graphs.algorithm.utils.BinaryHeap;
 import org.insa.graphs.model.Arc;
@@ -15,8 +16,8 @@ public class AStarAlgorithm extends DijkstraAlgorithm {
     public AStarAlgorithm(ShortestPathData data) {
         super(data); 
     }
-    public Label newLabel(int numNoeud, Node sommet_courant, Node noeudDestination) {
-    	return new LabelStar(numNoeud, sommet_courant, noeudDestination);
+    public Label newLabel(int numNoeud, Node sommet_courant, Node noeudDestination,  AbstractInputData Data,Graph graphe) {
+    	return new LabelStar(numNoeud, sommet_courant, noeudDestination, Data,graphe);
     }
     /*
     protected ShortestPathSolution doRun() {
