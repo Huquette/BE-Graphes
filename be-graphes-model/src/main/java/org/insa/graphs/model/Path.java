@@ -33,7 +33,6 @@ public class Path {
      */
     public static Path createFastestPathFromNodes(Graph graph, List<Node> nodes)
             throws IllegalArgumentException {
-    	System.out.println("Nouveau algo\n");
     	if (nodes.size() == 0) {
     		return new Path(graph);
     	}
@@ -45,14 +44,12 @@ public class Path {
         // TODO:
         for (int i = 0; i<nodes.size()-1; i++) {
         	liste_arcs = nodes.get(i).getSuccessors();
-        	System.out.println("avant filtrage\n");
         	System.out.println(liste_arcs);
         	liste_arcs = filter_arc(liste_arcs, nodes.get(i+1));
         	if (liste_arcs.isEmpty()) {
         		System.out.println("except\n");
         		throw new IllegalArgumentException();
         	}
-        	System.out.println("apres filtrage\n");
         	System.out.println(liste_arcs);
         	Arc best_arc = liste_arcs.get(0);
         	for (int j=1; j<liste_arcs.size();j++) {
@@ -92,14 +89,12 @@ public class Path {
         // TODO:
         for (int i = 0; i<nodes.size()-1; i++) {
         	liste_arcs = nodes.get(i).getSuccessors();
-        	System.out.println("avant filtrage\n");
         	System.out.println(liste_arcs);
         	liste_arcs = filter_arc(liste_arcs, nodes.get(i+1));
         	if (liste_arcs.isEmpty()) {
         		System.out.println("except\n");
         		throw new IllegalArgumentException();
         	}
-        	System.out.println("apres filtrage\n");
         	System.out.println(liste_arcs);
         	Arc best_arc = liste_arcs.get(0);
         	for (int j=1; j<liste_arcs.size();j++) {

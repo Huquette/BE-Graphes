@@ -96,5 +96,8 @@ public class BellmanFordAlgorithm extends ShortestPathAlgorithm {
 
         return solution;
     }
+    public ShortestPathSolution getDoRun() {
+    	return this.doRun();
+    }
 
 }

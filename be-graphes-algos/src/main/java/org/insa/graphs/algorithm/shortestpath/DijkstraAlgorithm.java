@@ -34,7 +34,6 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         Node noeudTerminal = data.getDestination();
         List<Node> listeNoeuds = graphe.getNodes();
         int nombreNoeuds = graphe.size();
-        System.out.println("avant for 1 plus\n");
         for (int i=0; i<nombreNoeuds; i++) {
             Label label = newLabel(i, listeNoeuds.get(i), noeudTerminal, data, graphe);
         	if (i == noeudOrigine.getId()) {
@@ -48,7 +47,6 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         Label labelMin;
         //List <Arc> listeSuccesseurs = new List<Arc>();
         List <Arc> listeSuccesseurs = new ArrayList<>();
-        System.out.println("avant while \n");
         while((!tasLabel.isEmpty())&&(!(listeLabel.get(noeudTerminal.getId())).marque())) {
         	labelMin = tasLabel.findMin();
         	notifyNodeMarked(labelMin.getSommetCourant());
@@ -67,20 +65,18 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         	  }
         	}
         	tasLabel.remove(labelMin);
-            if (tasLabel.isEmpty()) {
-            	ShortestPathSolution solution = new ShortestPathSolution(data, Status.INFEASIBLE, null);
-                return solution;
-            }
+        }
+        if (tasLabel.isEmpty() && (!(listeLabel.get(noeudTerminal.getId())).marque())) {
+        	ShortestPathSolution solution = new ShortestPathSolution(data, Status.INFEASIBLE, null);
+            return solution;
         }
         List<Node> chemin_final = new ArrayList<>();
         int i=0;
         chemin_final.add(i, noeudTerminal);
-        System.out.println("avant while final \n");
         while (listeLabel.get(noeudTerminal.getId()).getSommetCourant() != noeudOrigine) {
         	noeudTerminal = listeLabel.get(noeudTerminal.getId()).getPere();
             chemin_final.add(i, noeudTerminal);
         }
-        System.out.println("avant reverse \n");
         for (i=0; i<chemin_final.size(); i++) {
         	Node intermediaire = chemin_final.get(i);
         	chemin_final.set(i, chemin_final.get(chemin_final.size()-1-i));
@@ -89,6 +85,9 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         Path path_final = Path.createShortestPathFromNodes(graphe, chemin_final);
         ShortestPathSolution solution = new ShortestPathSolution(data, Status.OPTIMAL, path_final);
         return solution;
+    }
+    public ShortestPathSolution getDoRun() {
+    	return this.doRun();
     }
     
 }
