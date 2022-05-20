@@ -11,12 +11,13 @@ public class ShortestPathGraphicObserver implements ShortestPathObserver {
 
     // Drawing and Graph drawing
     protected Drawing drawing;
-    protected PointSetOverlay psOverlay1, psOverlay2;
+    protected PointSetOverlay psOverlay1, psOverlay2, psOverlay3;
 
     public ShortestPathGraphicObserver(Drawing drawing) {
         this.drawing = drawing;
         psOverlay1 = drawing.createPointSetOverlay(1, Color.CYAN);
         psOverlay2 = drawing.createPointSetOverlay(1, Color.BLUE);
+        psOverlay3 = drawing.createPointSetOverlay(7, Color.getColor("#FFFFFF"));
     }
 
     @Override
@@ -38,5 +39,10 @@ public class ShortestPathGraphicObserver implements ShortestPathObserver {
     public void notifyDestinationReached(Node node) {
         // drawing.drawMarker(node.getPoint(), Color.RED);
     }
+
+	@Override
+	public void notifyVendeur(Node node) {
+        psOverlay3.addPoint(node.getPoint());		
+	}
 
 }

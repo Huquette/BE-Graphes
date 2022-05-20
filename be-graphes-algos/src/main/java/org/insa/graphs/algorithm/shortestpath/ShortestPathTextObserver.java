@@ -34,4 +34,10 @@ public class ShortestPathTextObserver implements ShortestPathObserver {
 
     }
 
+	@Override
+	public void notifyVendeur(Node node) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

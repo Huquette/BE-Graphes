@@ -15,7 +15,7 @@ public class Vendeur_muguet extends ShortestPathAlgorithm{
 	public int k;
 	protected Vendeur_muguet(ShortestPathData data) {
 		super(data);
-		this.k = 6;
+		this.k = 5;
 		// TODO Auto-generated constructor stub
 	}
 	protected ShortestPathSolution doRun() {
@@ -30,7 +30,7 @@ public class Vendeur_muguet extends ShortestPathAlgorithm{
         for (int i = 0; i<nombreNoeuds; i++) {
         	for (int j = 0; j<nombreNoeuds; j++) {
 	        	ShortestPathData datainput = new ShortestPathData(graphe, listeNoeuds.get(i), listeNoeuds.get(j),ArcInspectorFactory.getAllFilters().get(0));
-	        	ShortestPathSolution path = new DijkstraAlgorithm(datainput).doRun();
+	        	ShortestPathSolution path = new AStarAlgorithm(datainput).doRun();
 	        	if (path.isFeasible()) {
 	        		length = path.getPath().getLength();
 	        	}
@@ -50,13 +50,13 @@ public class Vendeur_muguet extends ShortestPathAlgorithm{
 		int cmpt =0;
     	for (int i=1; i<nombreNoeuds;i++) {
     		listeIndices.set(0, nombreNoeuds - i);
-    		System.out.println("liste push stack");
-    		System.out.println(listeIndices);
-    		System.out.println(stack);
+    		//System.out.println("liste push stack");
+    		//System.out.println(listeIndices);
+    		//System.out.println(stack);
     		stack.push(new ArrayList<Integer>(listeIndices));
     		cmpt++;
     	}
-    	System.out.println(stack);
+    	//System.out.println(stack);
         while (!stack.isEmpty()) {
         	boolean b =true;
         	while (stack.peek().size() != this.k) {
@@ -88,8 +88,8 @@ public class Vendeur_muguet extends ShortestPathAlgorithm{
         	}
         	//System.out.println(stack);
         	listeIndices = stack.pop();
-        	System.out.println("lise testée de taille k\n");
-        	System.out.println(listeIndices);
+        	//System.out.println("lise testée de taille k\n");
+        	//System.out.println(listeIndices);
         	float distanceMax = 0;
         	for (int  i = 0; i< nombreNoeuds; i++) {
         		float distance = 99999999;
@@ -107,19 +107,19 @@ public class Vendeur_muguet extends ShortestPathAlgorithm{
         		}
         	}
         	if (b) {
-        		System.out.println("distance max");
-        		System.out.println(distanceMax);
-        		System.out.println("distance otal max");
-        		System.out.println(distanceTotalMax);
+        		//System.out.println("distance max");
+        		//System.out.println(distanceMax);
+        		//System.out.println("distance otal max");
+        		//System.out.println(distanceTotalMax);
         		distanceTotalMax = distanceMax;
-        		System.out.println("b");
-        		System.out.println(listeIndices);
+        		//System.out.println("b");
+        		//System.out.println(listeIndices);
         		listeFinale = listeIndices;
         	}
         }
         System.out.println(listeFinale);
         for (int i=0; i<listeFinale.size(); i++) {
-        	notifyNodeMarked(listeNoeuds.get(listeFinale.get(i)));
+        	notifyVendeur(listeNoeuds.get(listeFinale.get(i)));
         }
         System.out.println(cmpt);
         return new ShortestPathSolution(data, Status.INFEASIBLE);

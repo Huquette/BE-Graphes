@@ -34,4 +34,11 @@ public interface ShortestPathObserver {
 	 */
 	public void notifyDestinationReached(Node node);
 	
+	/**
+	 * On ajoute un observeur pour le vendeur de muguet
+	 * 
+	 * @param node les endroits où on vend le muguet
+	 */
+	public void notifyVendeur(Node node);
+	
 }

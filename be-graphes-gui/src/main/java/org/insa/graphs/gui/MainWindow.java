@@ -51,6 +51,7 @@ import org.insa.graphs.algorithm.shortestpath.ShortestPathAlgorithm;
 import org.insa.graphs.algorithm.shortestpath.ShortestPathData;
 import org.insa.graphs.algorithm.shortestpath.ShortestPathSolution;
 import org.insa.graphs.algorithm.shortestpath.ShortestPathTextObserver;
+import org.insa.graphs.algorithm.shortestpath.Vendeur_muguet;
 import org.insa.graphs.algorithm.weakconnectivity.WeaklyConnectedComponentTextObserver;
 import org.insa.graphs.algorithm.weakconnectivity.WeaklyConnectedComponentsAlgorithm;
 import org.insa.graphs.algorithm.weakconnectivity.WeaklyConnectedComponentsData;
@@ -108,7 +109,7 @@ public class MainWindow extends JFrame {
 
     // Algorithm panels
     private final List<AlgorithmPanel> algoPanels = new ArrayList<>();
-    private final AlgorithmPanel wccPanel, spPanel, cpPanel, psPanel;
+    private final AlgorithmPanel wccPanel, spPanel, cpPanel, psPanel, muguetPanel;
 
     // Path panel
     private final PathsPanel pathPanel;
@@ -201,6 +202,58 @@ public class MainWindow extends JFrame {
             }
         });
 
+        muguetPanel = new AlgorithmPanel(this, Vendeur_muguet.class, "Vendeur de muguet",
+                new String[] {}, true);
+        muguetPanel.addStartActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                StartActionEvent evt = (StartActionEvent) e;
+                ShortestPathData data = new ShortestPathData(graph, graph.get(0), graph.get(0), evt.getArcFilter());
+
+                ShortestPathAlgorithm spAlgorithm = null;
+                try {
+                    spAlgorithm = (ShortestPathAlgorithm) AlgorithmFactory
+                            .createAlgorithm(evt.getAlgorithmClass(), data);
+                }
+                catch (Exception e1) {
+                    JOptionPane.showMessageDialog(MainWindow.this,
+                            "An error occurred while creating the specified algorithm.",
+                            "Internal error: Algorithm instantiation failure",
+                            JOptionPane.ERROR_MESSAGE);
+                    e1.printStackTrace();
+                    return;
+                }
+
+                muguetPanel.setEnabled(false);
+
+                if (evt.isGraphicVisualizationEnabled()) {
+                    spAlgorithm.addObserver(new ShortestPathGraphicObserver(drawing));
+                }
+                if (evt.isTextualVisualizationEnabled()) {
+                    spAlgorithm.addObserver(new ShortestPathTextObserver(printStream));
+                }
+
+                final ShortestPathAlgorithm copyAlgorithm = spAlgorithm;
+                launchThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        // Run the algorithm.
+                        ShortestPathSolution solution = copyAlgorithm.run();
+                        // Add the solution to the solution panel (but do not display
+                        // overlay).
+                        muguetPanel.solutionPanel.addSolution(solution, false);
+                        // If the solution is feasible, add the path to the path panel.
+                        if (solution.isFeasible()) {
+                            pathPanel.addPath(solution.getPath());
+                        }
+                        // Show the solution panel and enable the shortest-path panel.
+                        muguetPanel.solutionPanel.setVisible(true);
+                        muguetPanel.setEnabled(true);
+                    }
+                });
+            }
+        });
+        
         spPanel = new AlgorithmPanel(this, ShortestPathAlgorithm.class, "Shortest-Path",
                 new String[] { "Origin", "Destination" }, true);
         spPanel.addStartActionListener(new ActionListener() {
@@ -263,6 +316,7 @@ public class MainWindow extends JFrame {
 
         // add algorithm panels
         algoPanels.add(wccPanel);
+        algoPanels.add(muguetPanel);
         algoPanels.add(spPanel);
         algoPanels.add(cpPanel);
         algoPanels.add(psPanel);
@@ -763,6 +817,16 @@ public class MainWindow extends JFrame {
                 enableAlgorithmPanel(psPanel);
             }
         }));
+        
+        // Car pooling
+        JMenuItem muguetItem = new JMenuItem("Vendeur de muguet");
+        muguetItem.addActionListener(baf.createBlockingAction(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                enableAlgorithmPanel(muguetPanel);
+            }
+        }));
+
 
         graphLockItems.add(wccItem);
         graphLockItems.add(spItem);
@@ -771,6 +835,7 @@ public class MainWindow extends JFrame {
 
         algoMenu.add(wccItem);
         algoMenu.addSeparator();
+        algoMenu.add(muguetItem);
         algoMenu.add(spItem);
         algoMenu.add(cpItem);
         algoMenu.add(psItem);

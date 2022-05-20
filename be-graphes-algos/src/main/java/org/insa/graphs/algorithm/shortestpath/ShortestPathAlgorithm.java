@@ -66,4 +66,15 @@ public abstract class ShortestPathAlgorithm extends AbstractAlgorithm<ShortestPa
             obs.notifyDestinationReached(node);
         }
     }
+    
+    /**
+     * On notifie à tous les observeurs qu'on a trouvé les vendeurs de muguet
+     * 
+     * @param node Destination.
+     */
+    public void notifyVendeur(Node node) {
+        for (ShortestPathObserver obs: getObservers()) {
+            obs.notifyVendeur(node);
+        }
+    }
 }

@@ -33,11 +33,12 @@ public class AlgorithmFactory {
         registerAlgorithm(ShortestPathAlgorithm.class, "Bellman-Ford", BellmanFordAlgorithm.class);
         registerAlgorithm(ShortestPathAlgorithm.class, "Dijkstra", DijkstraAlgorithm.class);
         registerAlgorithm(ShortestPathAlgorithm.class, "A*", AStarAlgorithm.class);
-        registerAlgorithm(ShortestPathAlgorithm.class, "Vendeur_Muguet", Vendeur_muguet.class);
 
         // Register your algorithms here:
         // registerAlgorithm(CarPoolingAlgorithm.class, "My Awesome Algorithm",
         // MyCarPoolingAlgorithm.class);
+        registerAlgorithm(Vendeur_muguet.class, "Vendeur_Muguet", Vendeur_muguet.class);
+
     }
 
     /**

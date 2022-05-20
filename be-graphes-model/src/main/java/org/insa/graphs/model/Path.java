@@ -44,13 +44,13 @@ public class Path {
         // TODO:
         for (int i = 0; i<nodes.size()-1; i++) {
         	liste_arcs = nodes.get(i).getSuccessors();
-        	System.out.println(liste_arcs);
+        	//System.out.println(liste_arcs);
         	liste_arcs = filter_arc(liste_arcs, nodes.get(i+1));
         	if (liste_arcs.isEmpty()) {
-        		System.out.println("except\n");
+        		//System.out.println("except\n");
         		throw new IllegalArgumentException();
         	}
-        	System.out.println(liste_arcs);
+        	//System.out.println(liste_arcs);
         	Arc best_arc = liste_arcs.get(0);
         	for (int j=1; j<liste_arcs.size();j++) {
         		if (best_arc.getMinimumTravelTime()>liste_arcs.get(j).getMinimumTravelTime()) {
@@ -77,7 +77,7 @@ public class Path {
      */
     public static Path createShortestPathFromNodes(Graph graph, List<Node> nodes)
             throws IllegalArgumentException {
-    	System.out.println("Nouveau algo\n");
+    	//System.out.println("Nouveau algo\n");
     	if (nodes.size() == 0) {
     		return new Path(graph);
     	}
@@ -89,13 +89,13 @@ public class Path {
         // TODO:
         for (int i = 0; i<nodes.size()-1; i++) {
         	liste_arcs = nodes.get(i).getSuccessors();
-        	System.out.println(liste_arcs);
+        	//System.out.println(liste_arcs);
         	liste_arcs = filter_arc(liste_arcs, nodes.get(i+1));
         	if (liste_arcs.isEmpty()) {
-        		System.out.println("except\n");
+        		//System.out.println("except\n");
         		throw new IllegalArgumentException();
         	}
-        	System.out.println(liste_arcs);
+        	//System.out.println(liste_arcs);
         	Arc best_arc = liste_arcs.get(0);
         	for (int j=1; j<liste_arcs.size();j++) {
         		if (best_arc.getLength()>liste_arcs.get(j).getLength()) {
@@ -259,7 +259,7 @@ public class Path {
         // TODO:
     	List<Arc> arc = this.arcs;
     	boolean bool = true;
-    	System.out.println(this);
+    	//System.out.println(this);
     	if (arc.isEmpty()) {
     		return bool;
     	}
