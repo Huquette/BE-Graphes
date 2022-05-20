@@ -15,9 +15,139 @@ public class Vendeur_muguet extends ShortestPathAlgorithm{
 	public int k;
 	protected Vendeur_muguet(ShortestPathData data) {
 		super(data);
-		this.k = 5;
+		this.k = 4;
 		// TODO Auto-generated constructor stub
 	}
+	protected ShortestPathSolution doRun() {
+		final ShortestPathData data = getInputData();
+        Graph graphe = this.data.getGraph();
+        Node noeudOrigine = data.getOrigin();
+        Node noeudTerminal = data.getDestination();
+        List<Node> listeNoeuds = graphe.getNodes();
+        int k = this.k;
+        int nombreNoeuds = graphe.size();
+        float [][]matCout= new float[nombreNoeuds][nombreNoeuds];
+        float length;
+        for (int i = 0; i<nombreNoeuds; i++) {
+        	for (int j = 0; j<nombreNoeuds; j++) {
+	        	ShortestPathData datainput = new ShortestPathData(graphe, listeNoeuds.get(i), listeNoeuds.get(j),ArcInspectorFactory.getAllFilters().get(0));
+	        	ShortestPathSolution path = new AStarAlgorithm(datainput).doRun();
+	        	if (path.isFeasible()) {
+	        		length = path.getPath().getLength();
+	        	}
+	        	else {
+	        		length = 999999999;
+	        	}
+	        	matCout[i][j] = length;
+        	}
+        }
+       int [] affectationGroupe = new int[graphe.size()];
+       int[] noeudSol = new int[this.k];
+       float seuil = 999999999;
+	for (int i=0; i<nombreNoeuds; i++) {
+		for (int j=0; j<nombreNoeuds; j++) {
+			if (matCout[i][j]< seuil) {
+				seuil = matCout[i][j];
+			}
+		}
+	}
+	float distanceChange = 999999999;
+	float [] pointLatitude = new float[k];
+	float [] pointLongitude = new float[k];
+	for (int i=0; i<this.k; i++) {
+		noeudSol[i] = i;
+		pointLatitude[i]= listeNoeuds.get(i).getPoint().getLatitude();
+		pointLongitude[i]= listeNoeuds.get(i).getPoint().getLongitude();
+	}
+	int plusProche = 0;
+	float [] nouvelleLatitude = new float[k];
+	float [] nouvelleLongitude = new float[k];
+	int [] nbrDansLeGroupe = new int[k];
+	int nbit = 0;
+	//boucle du pgm
+	System.out.println("fin dijkstra avnt boucle pgm");
+	do {
+		for (int i=0; i<k; i++) {
+		//System.out.println(noeudSol[i]);
+		nbrDansLeGroupe[i]=0;
+		nouvelleLatitude[i] = 0;
+		nouvelleLongitude[i]=0;
+		}
+
+		//System.out.println("fin tab \n");
+		//affectactation des noeuds aux différents groupes
+		for (int i=0; i<nombreNoeuds; i++) {
+			plusProche = 0;
+			for (int j=0; j<k;j++) {
+				if (matCout[i][noeudSol[j]]< matCout[i][noeudSol[plusProche]]) {
+					plusProche = j;
+				}
+			}
+			affectationGroupe[i] = plusProche;
+		}
+		//Nouveaux Centres
+		int gp;
+		//Calcul le centre de chaque groupe
+		for (int i=0; i<nombreNoeuds; i++) {
+			gp = affectationGroupe[i];
+			nbrDansLeGroupe[gp]++;
+			nouvelleLatitude[gp] += listeNoeuds.get(i).getPoint().getLatitude();
+			nouvelleLongitude[gp] += listeNoeuds.get(i).getPoint().getLongitude();
+		}
+		
+		for (int i=0; i<k; i++) {
+			//System.out.println("groupe ");
+			//System.out.println(i);
+			nouvelleLatitude[i] = nouvelleLatitude[i]/nbrDansLeGroupe[i];
+			nouvelleLongitude[i] = nouvelleLongitude[i]/nbrDansLeGroupe[i];	
+			//System.out.println(nouvelleLatitude[i]);
+			//System.out.println(nouvelleLongitude[i]);
+		}
+		//On choisit le noeud le plus proche du centre
+		float distanceIdeale;
+		float latitudeIdeale;
+		float longitudeIdeale;
+		float distanceIdeale2;
+		float latitudeIdeale2;
+		float longitudeIdeale2;
+		distanceChange = 0;
+		for (int i =0; i<nombreNoeuds; i++) {
+			for (int j = 0; j< k; j++) {
+				latitudeIdeale = listeNoeuds.get(i).getPoint().getLatitude()-nouvelleLatitude[j];
+				longitudeIdeale= listeNoeuds.get(i).getPoint().getLongitude()-nouvelleLongitude[j];
+				distanceIdeale = latitudeIdeale*latitudeIdeale + longitudeIdeale*longitudeIdeale;
+				latitudeIdeale2 = pointLatitude[j]-nouvelleLatitude[j];
+				longitudeIdeale2= pointLongitude[j]-nouvelleLongitude[j];
+				distanceIdeale2 = latitudeIdeale2*latitudeIdeale2 + longitudeIdeale2*longitudeIdeale2;
+				if (distanceIdeale<distanceIdeale2) {
+					//System.out.println(distanceIdeale);
+					pointLatitude[j] = listeNoeuds.get(i).getPoint().getLatitude();
+					pointLongitude[j] = listeNoeuds.get(i).getPoint().getLongitude();
+					distanceChange =Float.max( Float.min(matCout[i][noeudSol[j]],matCout[noeudSol[j]][i]),distanceChange);
+					noeudSol[j] = i;
+				}
+			}
+		}
+		nbit ++;
+	} while (nbit <150);
+    for (int i=0; i<this.k; i++) {
+    	//System.out.println("nouveau guys");
+    	//System.out.println(nbrDansLeGroupe[i]);
+    	//System.out.println(nouvelleLatitude[i]);
+    	//System.out.println(nouvelleLongitude[i]);
+    	//System.out.println("les valeurs");
+    	//System.out.println(nbrDansLeGroupe[i]);
+    	//System.out.println(pointLatitude[i]);
+    	//System.out.println(pointLongitude[i]);
+    	//System.out.println("valeur du point central");
+    	//System.out.println(nbrDansLeGroupe[i]);
+    	//System.out.println(listeNoeuds.get(noeudSol[i]).getPoint().getLatitude());
+    	//System.out.println(listeNoeuds.get(noeudSol[i]).getPoint().getLongitude());
+    	notifyVendeur(listeNoeuds.get(noeudSol[i]));
+    }
+    return new ShortestPathSolution(data, Status.INFEASIBLE);
+}
+	/*
 	protected ShortestPathSolution doRun() {
 		final ShortestPathData data = getInputData();
         Graph graphe = this.data.getGraph();
@@ -124,6 +254,7 @@ public class Vendeur_muguet extends ShortestPathAlgorithm{
         System.out.println(cmpt);
         return new ShortestPathSolution(data, Status.INFEASIBLE);
 	}
+	*/
 	   public ShortestPathSolution getDoRun() {
 	    	return this.doRun();
 	    }
