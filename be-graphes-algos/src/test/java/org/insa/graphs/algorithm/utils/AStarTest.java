@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import org.insa.graphs.algorithm.ArcInspectorFactory;
+import org.insa.graphs.algorithm.shortestpath.AStarAlgorithm;
 import org.insa.graphs.algorithm.shortestpath.BellmanFordAlgorithm;
 import org.insa.graphs.algorithm.shortestpath.DijkstraAlgorithm;
 import org.insa.graphs.algorithm.shortestpath.ShortestPathData;
@@ -32,7 +33,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import java.util.Random;
 
-public class DijikstraTest {
+public class AStarTest {
 
 
     // List of nodes
@@ -94,7 +95,7 @@ public class DijikstraTest {
     		noeud1 = graph.getNodes().get(n1);
     		noeud2 = graph.getNodes().get(n2);
     		data = new ShortestPathData(graph, noeud1, noeud2, ArcInspectorFactory.getAllFilters().get(0));
-    		dijkstra = new DijkstraAlgorithm(data);
+    		dijkstra = new AStarAlgorithm(data);
     		bellman = new BellmanFordAlgorithm(data);
     		runDij = dijkstra.run();
     		runBell = bellman.run();
@@ -110,13 +111,13 @@ public class DijikstraTest {
     	boolean bool = true;
     	
     	//test sur une map plus grande sans oracle
-    	for (int i=0; i<10; i++) {
+    	for (int i=0; i<10;i++) {
     		n1 = random.nextInt(graph.size());	
     		n2  = random.nextInt(graph.size());
     		noeud1 = graph.getNodes().get(n1);
     		noeud2 = graph.getNodes().get(n2);
     		data = new ShortestPathData(graph, noeud1, noeud2, ArcInspectorFactory.getAllFilters().get(0));
-    		dijkstra = new DijkstraAlgorithm(data);
+    		dijkstra = new AStarAlgorithm(data);
     		runDij = dijkstra.run();
     		System.out.println(i);
     		Path p1;
@@ -148,3 +149,4 @@ public class DijikstraTest {
     }
 
 }
+

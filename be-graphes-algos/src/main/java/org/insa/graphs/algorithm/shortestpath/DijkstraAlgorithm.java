@@ -70,6 +70,7 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         	ShortestPathSolution solution = new ShortestPathSolution(data, Status.INFEASIBLE, null);
             return solution;
         }
+        //creation du shortest path solution a partir de notre liste de label
         List<Node> chemin_final = new ArrayList<>();
         int i=0;
         chemin_final.add(i, noeudTerminal);

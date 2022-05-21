@@ -2,6 +2,7 @@
 package org.insa.graphs.algorithm.shortestpath;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.Stack;
 
 import org.insa.graphs.algorithm.AbstractInputData;
@@ -19,6 +20,7 @@ public class Vendeur_muguet extends ShortestPathAlgorithm{
 		// TODO Auto-generated constructor stub
 	}
 	protected ShortestPathSolution doRun() {
+		Random random = new Random();
 		final ShortestPathData data = getInputData();
         Graph graphe = this.data.getGraph();
         Node noeudOrigine = data.getOrigin();
@@ -55,9 +57,9 @@ public class Vendeur_muguet extends ShortestPathAlgorithm{
 	float [] pointLatitude = new float[k];
 	float [] pointLongitude = new float[k];
 	for (int i=0; i<this.k; i++) {
-		noeudSol[i] = i;
-		pointLatitude[i]= listeNoeuds.get(i).getPoint().getLatitude();
-		pointLongitude[i]= listeNoeuds.get(i).getPoint().getLongitude();
+		noeudSol[i] = random.nextInt(nombreNoeuds);
+		pointLatitude[i] = listeNoeuds.get(noeudSol[i]).getPoint().getLatitude();
+		pointLongitude[i] = listeNoeuds.get(noeudSol[i]).getPoint().getLongitude();
 	}
 	int plusProche = 0;
 	float [] nouvelleLatitude = new float[k];
@@ -69,6 +71,11 @@ public class Vendeur_muguet extends ShortestPathAlgorithm{
 	do {
 		for (int i=0; i<k; i++) {
 		//System.out.println(noeudSol[i]);
+			if (nbrDansLeGroupe[i] < nombreNoeuds/(k*k)) {
+				noeudSol[i] = random.nextInt(nombreNoeuds);
+				pointLatitude[i] = listeNoeuds.get(noeudSol[i]).getPoint().getLatitude();
+				pointLongitude[i] = listeNoeuds.get(noeudSol[i]).getPoint().getLongitude();
+			}
 		nbrDansLeGroupe[i]=0;
 		nouvelleLatitude[i] = 0;
 		nouvelleLongitude[i]=0;
@@ -129,7 +136,9 @@ public class Vendeur_muguet extends ShortestPathAlgorithm{
 			}
 		}
 		nbit ++;
-	} while (nbit <150);
+	} while ((distanceChange > 3*seuil)&&(nbit < nombreNoeuds*nombreNoeuds*nombreNoeuds));
+	System.out.println(nbit);
+	System.out.println(nombreNoeuds*nombreNoeuds*nombreNoeuds);
     for (int i=0; i<this.k; i++) {
     	//System.out.println("nouveau guys");
     	//System.out.println(nbrDansLeGroupe[i]);
