@@ -27,13 +27,14 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
 	}
     @Override
     protected ShortestPathSolution doRun() {
-    	//debut init
+    	//Recupration d'informations
         final ShortestPathData data = getInputData();
         Graph graphe = this.data.getGraph();
         Node noeudOrigine = data.getOrigin();
         Node noeudTerminal = data.getDestination();
         List<Node> listeNoeuds = graphe.getNodes();
         int nombreNoeuds = graphe.size();
+        //Initialisation des labels dans une liste
         for (int i=0; i<nombreNoeuds; i++) {
             Label label = newLabel(i, listeNoeuds.get(i), noeudTerminal, data, graphe);
         	if (i == noeudOrigine.getId()) {
@@ -41,12 +42,13 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         	}
         	listeLabel.add(label);
         }
-        //On a fini l'init
+        //On ajoute l'origine au tas
         BinaryHeap<Label> tasLabel = new BinaryHeap<Label>();
         tasLabel.insert(listeLabel.get(noeudOrigine.getId()));
         Label labelMin;
         //List <Arc> listeSuccesseurs = new List<Arc>();
         List <Arc> listeSuccesseurs = new ArrayList<>();
+        //
         while((!tasLabel.isEmpty())&&(!(listeLabel.get(noeudTerminal.getId())).marque())) {
         	labelMin = tasLabel.findMin();
         	notifyNodeMarked(labelMin.getSommetCourant());

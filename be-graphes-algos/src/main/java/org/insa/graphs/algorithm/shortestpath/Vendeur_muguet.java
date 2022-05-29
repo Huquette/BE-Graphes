@@ -19,6 +19,8 @@ public class Vendeur_muguet extends ShortestPathAlgorithm{
 		this.k = 4;
 		// TODO Auto-generated constructor stub
 	}
+//Do run de l'aglo k means	
+	
 	protected ShortestPathSolution doRun() {
 		Random random = new Random();
 		final ShortestPathData data = getInputData();
@@ -28,8 +30,16 @@ public class Vendeur_muguet extends ShortestPathAlgorithm{
         List<Node> listeNoeuds = graphe.getNodes();
         int k = this.k;
         int nombreNoeuds = graphe.size();
+        System.out.println(nombreNoeuds*nombreNoeuds);
         float [][]matCout= new float[nombreNoeuds][nombreNoeuds];
         float length;
+        int [] affectationGroupe = new int[graphe.size()];
+        int[] noeudSol = new int[this.k];
+//défini un seuil pour déterminer si les centres ont peu bougé
+        float seuil = Math.abs(graphe.getGraphInformation().getBoundingBox().getBottomRightPoint().getLatitude()-graphe.getGraphInformation().getBoundingBox().getTopLeftPoint().getLatitude());
+        seuil = seuil*40008000 /(2*360*k);
+        System.out.println(seuil);
+//Réalisation des n*n dijkstra
         for (int i = 0; i<nombreNoeuds; i++) {
         	for (int j = 0; j<nombreNoeuds; j++) {
 	        	ShortestPathData datainput = new ShortestPathData(graphe, listeNoeuds.get(i), listeNoeuds.get(j),ArcInspectorFactory.getAllFilters().get(0));
@@ -43,16 +53,7 @@ public class Vendeur_muguet extends ShortestPathAlgorithm{
 	        	matCout[i][j] = length;
         	}
         }
-       int [] affectationGroupe = new int[graphe.size()];
-       int[] noeudSol = new int[this.k];
-       float seuil = 999999999;
-	for (int i=0; i<nombreNoeuds; i++) {
-		for (int j=0; j<nombreNoeuds; j++) {
-			if (matCout[i][j]< seuil) {
-				seuil = matCout[i][j];
-			}
-		}
-	}
+ //Initialisation des tableaux que nous allons utiliser
 	float distanceChange = 999999999;
 	float [] pointLatitude = new float[k];
 	float [] pointLongitude = new float[k];
@@ -66,12 +67,13 @@ public class Vendeur_muguet extends ShortestPathAlgorithm{
 	float [] nouvelleLongitude = new float[k];
 	int [] nbrDansLeGroupe = new int[k];
 	int nbit = 0;
-	//boucle du pgm
+//boucle du pgm
 	System.out.println("fin dijkstra avnt boucle pgm");
 	do {
+//Vérifie que les groupes ne sont pas trop petit, évite les problème de groupe isolés
 		for (int i=0; i<k; i++) {
 		//System.out.println(noeudSol[i]);
-			if (nbrDansLeGroupe[i] < nombreNoeuds/(k*k)) {
+			if (nbrDansLeGroupe[i] <  nombreNoeuds/((k* k))) {
 				noeudSol[i] = random.nextInt(nombreNoeuds);
 				pointLatitude[i] = listeNoeuds.get(noeudSol[i]).getPoint().getLatitude();
 				pointLongitude[i] = listeNoeuds.get(noeudSol[i]).getPoint().getLongitude();
@@ -82,7 +84,7 @@ public class Vendeur_muguet extends ShortestPathAlgorithm{
 		}
 
 		//System.out.println("fin tab \n");
-		//affectactation des noeuds aux différents groupes
+//affectactation des noeuds aux différents groupes
 		for (int i=0; i<nombreNoeuds; i++) {
 			plusProche = 0;
 			for (int j=0; j<k;j++) {
@@ -92,25 +94,26 @@ public class Vendeur_muguet extends ShortestPathAlgorithm{
 			}
 			affectationGroupe[i] = plusProche;
 		}
-		//Nouveaux Centres
+//Nouveaux Centres
 		int gp;
 		//Calcul le centre de chaque groupe
+		//Moyenne géométrique
 		for (int i=0; i<nombreNoeuds; i++) {
 			gp = affectationGroupe[i];
 			nbrDansLeGroupe[gp]++;
-			nouvelleLatitude[gp] += listeNoeuds.get(i).getPoint().getLatitude();
-			nouvelleLongitude[gp] += listeNoeuds.get(i).getPoint().getLongitude();
+			nouvelleLatitude[gp] += Math.log(listeNoeuds.get(i).getPoint().getLatitude());
+			nouvelleLongitude[gp] += Math.log(listeNoeuds.get(i).getPoint().getLongitude());
 		}
 		
 		for (int i=0; i<k; i++) {
 			//System.out.println("groupe ");
 			//System.out.println(i);
-			nouvelleLatitude[i] = nouvelleLatitude[i]/nbrDansLeGroupe[i];
-			nouvelleLongitude[i] = nouvelleLongitude[i]/nbrDansLeGroupe[i];	
+			nouvelleLatitude[i] = (float) Math.exp(nouvelleLatitude[i]/nbrDansLeGroupe[i]);
+			nouvelleLongitude[i] = (float) Math.exp(nouvelleLongitude[i]/nbrDansLeGroupe[i]);	
 			//System.out.println(nouvelleLatitude[i]);
 			//System.out.println(nouvelleLongitude[i]);
 		}
-		//On choisit le noeud le plus proche du centre
+//On choisit le noeud le plus proche du centre
 		float distanceIdeale;
 		float latitudeIdeale;
 		float longitudeIdeale;
@@ -130,15 +133,31 @@ public class Vendeur_muguet extends ShortestPathAlgorithm{
 					//System.out.println(distanceIdeale);
 					pointLatitude[j] = listeNoeuds.get(i).getPoint().getLatitude();
 					pointLongitude[j] = listeNoeuds.get(i).getPoint().getLongitude();
-					distanceChange =Float.max( Float.min(matCout[i][noeudSol[j]],matCout[noeudSol[j]][i]),distanceChange);
+					distanceChange +=Float.min(matCout[i][noeudSol[j]],matCout[noeudSol[j]][i]);
 					noeudSol[j] = i;
 				}
 			}
 		}
 		nbit ++;
-	} while ((distanceChange > 3*seuil)&&(nbit < nombreNoeuds*nombreNoeuds*nombreNoeuds));
+		System.out.println("distan,ce change");
+		System.out.println(distanceChange);
+	} while (((distanceChange > seuil)&&(nbit < k*k*nombreNoeuds*nombreNoeuds)));
+	float res = 0;
+	for (int i=0; i<nombreNoeuds; i++) {
+		plusProche = 0;
+		for (int j=0; j<k;j++) {
+			if (matCout[i][noeudSol[j]]< matCout[i][noeudSol[plusProche]]) {
+				plusProche = j;
+			}
+		}
+		if (res< matCout[i][noeudSol[plusProche]]) {
+			res  = matCout[i][noeudSol[plusProche]];
+		}
+	}
+	System.out.println("pire accessibilité");
+	System.out.println(res);
 	System.out.println(nbit);
-	System.out.println(nombreNoeuds*nombreNoeuds*nombreNoeuds);
+	System.out.println(k*k*nombreNoeuds*nombreNoeuds);
     for (int i=0; i<this.k; i++) {
     	//System.out.println("nouveau guys");
     	//System.out.println(nbrDansLeGroupe[i]);
@@ -156,7 +175,9 @@ public class Vendeur_muguet extends ShortestPathAlgorithm{
     }
     return new ShortestPathSolution(data, Status.INFEASIBLE);
 }
-	/*
+
+//Do run de l'algo brut force
+/*
 	protected ShortestPathSolution doRun() {
 		final ShortestPathData data = getInputData();
         Graph graphe = this.data.getGraph();

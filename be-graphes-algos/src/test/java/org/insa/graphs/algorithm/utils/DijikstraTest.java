@@ -61,12 +61,12 @@ public class DijikstraTest {
         // TODO: Read the graph.
         graph = reader.read();
         
-        final String mapName2 = "/home/darthenu/japan.mapgr";
+        final String mapName2 = "/home/darthenu/bretagne.mapgr";
         
 
         // Create a graph reader.
         final GraphReader reader2 = new BinaryGraphReader(
-                new DataInputStream(new BufferedInputStream(new FileInputStream(mapName))));
+                new DataInputStream(new BufferedInputStream(new FileInputStream(mapName2))));
 
         // TODO: Read the graph.
         graph2 = reader2.read();
@@ -86,7 +86,7 @@ public class DijikstraTest {
     	ShortestPathSolution runDij;
     	ShortestPathSolution runBell;
     	Random random = new Random();
-    	for (int i=0; i<25; i++) {
+    	for (int i=0; i<10;i++) {
     		n1 = random.nextInt(graph.size());	
     		//System.out.println(n1);
     		n2  = random.nextInt(graph.size());
@@ -111,11 +111,11 @@ public class DijikstraTest {
     	
     	//test sur une map plus grande sans oracle
     	for (int i=0; i<10; i++) {
-    		n1 = random.nextInt(graph.size());	
-    		n2  = random.nextInt(graph.size());
-    		noeud1 = graph.getNodes().get(n1);
-    		noeud2 = graph.getNodes().get(n2);
-    		data = new ShortestPathData(graph, noeud1, noeud2, ArcInspectorFactory.getAllFilters().get(0));
+    		n1 = random.nextInt(graph2.size());	
+    		n2  = random.nextInt(graph2.size());
+    		noeud1 = graph2.getNodes().get(n1);
+    		noeud2 = graph2.getNodes().get(n2);
+    		data = new ShortestPathData(graph2, noeud1, noeud2, ArcInspectorFactory.getAllFilters().get(0));
     		dijkstra = new DijkstraAlgorithm(data);
     		runDij = dijkstra.run();
     		System.out.println(i);
@@ -123,20 +123,21 @@ public class DijikstraTest {
     		Path p2;
     		if (runDij.isFeasible() && (n1 != n2)) {
     			p1 = runDij.getPath();
+    			//test sous-chemins
     			for (int j=0;j<10;j++) {
     				n1 = random.nextInt(p1.size()-1);
     	    		n2  = random.nextInt(p1.size()-1);
     	    		noeud1 = p1.getArcs().get(n1).getOrigin();
     	    		noeud2 = p1.getArcs().get(n2).getOrigin();
     	    		if (n1<n2) {
-    	    			data = new ShortestPathData(graph, noeud1, noeud2, ArcInspectorFactory.getAllFilters().get(0));
+    	    			data = new ShortestPathData(graph2, noeud1, noeud2, ArcInspectorFactory.getAllFilters().get(0));
     	        		dijkstra = new DijkstraAlgorithm(data);
     	        		runDij = dijkstra.run();
     	        		p2 = runDij.getPath();
     	        		assertEquals(bool, p1.getArcs().containsAll(p2.getArcs()));
     	    		}
     	    		else {
-    	    			data = new ShortestPathData(graph, noeud2, noeud1, ArcInspectorFactory.getAllFilters().get(0));
+    	    			data = new ShortestPathData(graph2, noeud2, noeud1, ArcInspectorFactory.getAllFilters().get(0));
     	        		dijkstra = new DijkstraAlgorithm(data);
     	        		runDij = dijkstra.run();
     	        		p2 = runDij.getPath();
